@@ -1,19 +1,22 @@
 import numpy as np
+import tensorflow as tf
 
-from src.layers.activation import Activation
+from src.layers.activations import Activation
 from src.layers.dense import Dense
 from src.layers.dropout import Dropout
 from src.layers.input import Input
 from src.model import Model
 
 def main():
-    input_size = output_size = 1024
+    input_size = output_size = 2048
 
     inputs = Input((input_size,))
-    layer = Dense(5)(inputs)
-    layer = Activation('relu')(layer)
+    dense = Dense(5, activation='relu')
+    layer = dense(inputs)
+    tf.summary.histogram('dense/1/weights', dense.weights)
+    tf.summary.histogram('dense/1/biases', dense.biases)
     layer = Dropout(0.25)(layer)
-    outputs = Dense(output_size)(layer)
+    outputs = Dense(output_size, activation='relu')(layer)
 
     train_x, train_y = make_data(80000, output_size)
     test_x, test_y = make_data(20000, output_size)
